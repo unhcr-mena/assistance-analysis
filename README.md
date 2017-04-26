@@ -73,7 +73,7 @@ Assistance types are broken down per country (Egypt, Iraq, Jordan, Lebanon, Syri
     - Assistance type by Neighbourhood
     - Assistance type by Time in CoR
     
-    * Percentage of cases receiving Education + Winter
+  * Percentage of cases receiving Education + Winter
     - Assistance type by Family composition
     - Assistance type by Neighbourhood
     - Assistance type by Time in CoR
@@ -82,9 +82,3 @@ Assistance types are broken down per country (Egypt, Iraq, Jordan, Lebanon, Syri
     - Assistance type by Family composition
     - Assistance type by Neighbourhood
     - Assistance type by Time in CoR
-    
-    
-    
-    
-    
-    
