@@ -30,17 +30,30 @@ write.csv(progres.case, file = "data/progrescase.csv",na="")
 
 dbhandlejordan <- odbcConnect(jordan, uid=user1, pwd=passw1)
 assistance.case.jordan  <- sqlQuery(dbhandlejordan , 'SELECT * FROM [Assistance].[vAssistanceSearch]')
-
+assistance.case.jordan$instance <- "Jordan"
 dbhandleiraq <- odbcConnect(iraq, uid=user1, pwd=passw1)
 assistance.case.iraq  <- sqlQuery(dbhandleiraq , 'SELECT * FROM [Assistance].[vAssistanceSearch]')
-
+assistance.case.iraq $instance <- "Iraq "
 dbhandlelebanon <- odbcConnect(lebanon, uid=user1, pwd=passw1)
 assistance.case.lebanon  <- sqlQuery(dbhandlelebanon , 'SELECT * FROM [Assistance].[vAssistanceSearch]')
 
+assistance.case.lebanon1 <- assistance.case.lebanon[ , c("CaseAssistanceId", "ProvidedDate",  "SectorName",   
+                                                         "SubSectorName", "AssistanceTypeName", "CaseNo",            
+                                                         "OrganizationId",  "Funded", "Provide", "Through", "Unit", "IsCaseBase",        
+                                                         "Quantity", "Value", "RationCard", "IsConfidential", "IsColleted" )]
+assistance.case.lebanon1$instance <- "Lebanon"
 
-assistance.case <- rbind(assistance.case.jordan,assistance.case.iraq,assistance.case.lebanon)
-rm(assistance.case.jordan,assistance.case.iraq,assistance.case.lebanon)
+names(assistance.case.jordan)
+names(assistance.case.iraq)
+names(assistance.case.lebanon)
+
+assistance.case <- rbind(assistance.case.jordan,assistance.case.iraq,assistance.case.lebanon1)
+rm(assistance.case.jordan,assistance.case.iraq,assistance.case.lebanon,assistance.case.lebanon1)
 
 write.csv(assistance.case, file = "data/assistancecase.csv",na="")
+
+## get level type
+
+assistancetype <- as.data.frame(levels(assistance.case$AssistanceTypeName))
 
 rm(dbhandleprogres,dbhandlejordan,dbhandleiraq,dbhandlelebanon ,passw,progres,user)
