@@ -1,0 +1,55 @@
+---
+title: "Initial Exploration of Assistance tracking in RAIS - Iraq-Jordan-Lebanon"
+author: "Prepared by UNHCR DOiA, MENA Protection Services"
+date: "Amman, `r Sys.Date()`"
+output: 
+  word_document: 
+    fig_caption: yes
+    toc: yes
+    toc_depth: 2
+---
+
+```{r setup, include=FALSE, echo=FALSE, warning=FALSE, message=FALSE}
+setwd("D:/R-project/assistance-analysis")
+
+source("code/-packages.R")
+
+assistance.case <- fread( file = "data/assistancecase.csv",na="")
+
+
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction
+
+This reports presents the analysis of assistance recorded in the RAIS - (Refugee Assistance Information System) fro Jordan, Lebanon & Iraq.
+
+It represents a total of `r nrow(data)` :   `r nrow(data[data$instance=="Iraq", ])`  for Iraq, `r nrow(data[data$instance=="Lebanon", ])`  for Lebanon and  `r nrow(data[data$instance=="Jordan", ])`  for Jordan.
+
+
+
+Assistance Type were recategorised in order to come with meaningfull categories for analysis.
+
+# Assistance record per country over years
+
+
+# Assistancetype, country and months
+
+# Details of cash assistance
+
+# Details of NFI assistance
+
+# 
+
+# Assistance Type from & through - by year & country
+The following sankey diagram provided an overview of the origin and delivery stream of 
+
+
+# Assistance occurence by case
+The following visualisation provides an overview of the most associated assistance type
+
+
+

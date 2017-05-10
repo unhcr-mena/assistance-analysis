@@ -10,6 +10,7 @@ packages <- c("ggplot2", # package for elegant data visualization using the Gram
               "Hmisc", # generate a detailled describtion of a given dataset 
              # "AER",  # interesting datasets
               "lattice",
+              "data.table",
               "tufte",
               "VGAM",
               "aod",
@@ -32,6 +33,7 @@ packages <- c("ggplot2", # package for elegant data visualization using the Gram
               "xkcd", ## Style from the xkcd comics 
               "Amelia",
               "rattle",
+             "cowplot",
               "gvlma", "glmulti",
               "scatterplot3d", "cluster", 
               "ade4",  "psych", 
@@ -72,6 +74,10 @@ rm(packages)
 #devtools::install_github("wilkelab/cowplot", force=TRUE)
 library(cowplot)
 
+
+library(data.table)
+
+
 # loads packages into memory
 #library(prettyR)
 library(plyr)
@@ -89,23 +95,23 @@ library(extrafont) ## Additional fonts
 library(ggthemes) ## Additional themes for gplot2
 library(gdata)
 library(gridExtra)
-#library(scales)
+library(scales)
 
 #library(lattice)
 
 ############################################
 #### Spatial Packages
-library(maptools) ## Create maps
-library(rgdal) ## Open geographic files
-library(rgeos)
-library(ggmap) ## get background map from google map
-library(sp) ## Spatial library
+#library(maptools) ## Create maps
+#library(rgdal) ## Open geographic files
+#library(rgeos)
+#library(ggmap) ## get background map from google map
+#library(sp) ## Spatial library
 #library(raster) ## Managing raster dataset
 library(classInt) ## Classififcation
 library(hexbin) ## Hexa binning
-library(geojsonio)
-library(cartography)
-library(SpatialPosition)
+#library(geojsonio)
+#library(cartography)
+#library(SpatialPosition)
 
 ############################################
 ## Code reformatting
@@ -140,13 +146,13 @@ library(corrplot)
 #library(doSNOW)
 #library(e1071)
 #library(extraTrees)
-library(FactoMineR) ## Multiple correspondance analysis and classification
-library(factoextra)
+#library(FactoMineR) ## Multiple correspondance analysis and classification
+#library(factoextra)
 #library(foreach)
 #library(gbm)
-library(glmnet)
+#library(glmnet)
 #library(glmulti)
-library(gmodels)
+#library(gmodels)
 #library(grplasso)
 #library(ipred)
 #library(kernlab)
@@ -158,15 +164,15 @@ library(gmodels)
 #library(plsRglm)
 #library(prim)
 #library(pscl) ## used to verify the prediction power of a logistic model
-library(pROC)
+#library(pROC)
 #library(questionr)
-library(randomForest)
+#library(randomForest)
 #library(randtoolbox)
 #library(rgl)
 #library(rgrs)
 #library(ROCR)
 #library(rpart)
-library(rpart.plot)
+#library(rpart.plot)
 #library(snow)
 #library(speedglm)
 #library(tree)
