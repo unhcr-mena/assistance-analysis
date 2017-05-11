@@ -1,4 +1,38 @@
 ### Recategorise assistance type
+assistance.case <- fread( file = "data/assistancecase1.csv",na="")
+
+names(assistance.case)
+
+### Check organisations names
+#"Funded"             "Provide"            "Through"
+# write.csv(as.data.frame(levels(assistance.case$Funded)), file = "data/Funded.csv",na="")
+# write.csv(as.data.frame(levels(assistance.case$Provide)), file = "data/Provide.csv",na="")
+# write.csv(as.data.frame(levels(assistance.case$Through)), file = "data/Through.csv",na="")
+
+## Need to change UNHCR Lebanon to UNHCR & World Food Program to WFP
+assistance.case[Funded == "UNHCR Lebanon", Funded:="UNHCR"]
+assistance.case[Provide == "UNHCR Lebanon", Provide:="UNHCR"]
+assistance.case[Through == "UNHCR Lebanon", Through:="UNHCR"]
+
+assistance.case[Funded == "UNHCR Data Analysis Group", Funded :="UNHCR"]
+assistance.case[Provide == "UNHCR Data Analysis Group", Provide :="UNHCR"]
+assistance.case[Through == "UNHCR Data Analysis Group", Through :="UNHCR"]
+
+
+
+assistance.case[Funded=="World Food Program",Funded:="WFP"]
+assistance.case[Provide=="World Food Program",Provide:="WFP"]
+assistance.case[Through=="World Food Program",Through:="WFP"]
+
+## The data frame syntax crashes...
+#assistance.case$Funded[assistance.case$Funded=="UNHCR Lebanon"] <-"UNHCR"
+#assistance.case$Provide[assistance.case$Provide=="UNHCR Lebanon"] <-"UNHCR"
+#assistance.case$Through[assistance.case$Through=="UNHCR Lebanon"] <-"UNHCR"
+
+#assistance.case$Funded[assistance.case$Funded=="World Food Program"] <-"WFP"
+#assistance.case$Provide[assistance.case$Provide=="World Food Program"] <-"WFP"
+#assistance.case$Through[assistance.case$Through=="World Food Program"] <-"WFP"
+
 
 
 ## get level type for cleaning 

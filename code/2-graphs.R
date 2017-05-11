@@ -1,5 +1,7 @@
+
+## Loading Libraries
 source("code/0-packages.R")
-## Lib
+
 
 ### generate a few initial graphs
 
@@ -7,8 +9,19 @@ source("code/0-packages.R")
 
 assistance.case <- fread( file = "data/assistancecase.csv",na="")
 
+str(assistance.case)
+
 ## Reparse correctly the date
-assistance.case$ProvidedDate <- as.Date(as.character(assistance.case$ProvidedDate), "%Y-%m-%d")
+#assistance.case$ProvidedDate <- as.Date(as.character(assistance.case$ProvidedDate), "%Y-%m-%d")
+## better with data.table syntax
+assistance.case <- assistance.case[, ProvidedDate := as.Date(fast_strptime(ProvidedDate, "%Y-%m-%d"))]
+
+## need to remove records with wrong date..
+assistance.case <- assistance.case[year(ProvidedDate) %in%  c("2011","2012","2013","2014","2015","2016","2017")]
+
+assistance.case <- assistance.case[ ProvidedDate > as.Date(fast_strptime("2012-06-01", "%Y-%m-%d"))]
+assistance.case <- assistance.case[ ProvidedDate < as.Date(fast_strptime("2017-04-01", "%Y-%m-%d"))]
+
 
 ## Checking structure
 #str(assistance.case)
@@ -42,7 +55,7 @@ plotfreq <- ggplot(frequ, aes(x=AssistanceType1,y = Frequency)) +
   #scale_y_continuous(labels=percent)+
   xlab("") +
   coord_flip() +
-  ggtitle("Asisstance Type")+
+  ggtitle("Assistance Type")+
   theme(plot.title=element_text(face="bold", size=9),
         plot.background = element_rect(fill = "transparent",colour = NA))
 
@@ -74,7 +87,7 @@ plotfreq.instance <- ggplot(frequ.instance, aes(x=AssistanceType1,y = N)) +
   #scale_y_continuous(labels=percent)+
   xlab("") +
   coord_flip() +
-  ggtitle("Asisstance Type per instance")+
+  ggtitle("Assistance Type per instance")+
   theme(plot.title=element_text(face="bold", size=9),
         plot.background = element_rect(fill = "transparent",colour = NA))
 
@@ -82,59 +95,133 @@ plotfreq.instance
 
 ggsave(plotfreq.instance, filename="out/assistancetype-instance.png",  dpi=300)
 
+###########################################################################################################
+## graph per instance & organisation Provide
+
+###########################################################################################################
+
+#frequ.instance <- assistance.case[, .N ,by = .(AssistanceType, instance)]
+
+## Getting directly relative percentage per instance
+frequ.instance.provide <-assistance.case[, as.data.table(prop.table(table(AssistanceType, instance, Provide),2))]
+frequ.instance.provide$AssistanceType1 <- factor(frequ.instance.provide$AssistanceType, levels=frequ.level)
+
+## let's subset values that are above 5%
+frequ.instance.provide1 <- frequ.instance.provide[frequ.instance.provide$N >= 0.05, ]
+frequ.instance.provide1$Provide1 <- as.factor(as.character(frequ.instance.provide1$Provide))
+
+plotfreq.instance.provide <- ggplot(frequ.instance.provide1, aes(x=AssistanceType1,y = N,  fill=Provide)) +
+  geom_bar(stat="identity" ,colour="#2a87c8") +
+  facet_wrap(~ instance, ncol=3) +
+  ylab("Frequency") +
+  scale_fill_brewer(palette = "Paired") + 
+  xlab("") +
+  coord_flip() +
+  ggtitle("Assistance Type per instance for delivering Organisation", 
+          subtitle = "Only organisation that have assistance records accounting for more than 5% within countries are displayed" )+
+  theme(plot.title=element_text(face="bold", size=9),
+        plot.subtitle=element_text( size=8),
+        plot.background = element_rect(fill = "transparent",colour = NA))
+plotfreq.instance.provide
+ggsave(plotfreq.instance.provide, filename="out/assistancetype-instance-provide.png", width=20,  dpi=300)
+
+###########################################################################################################
+## graph per instance & organisation Through
+
+###########################################################################################################
+
+#frequ.instance <- assistance.case[, .N ,by = .(AssistanceType, instance)]
+
+## Getting directly relative percentage per instance
+frequ.instance.Through <-assistance.case[, as.data.table(prop.table(table(AssistanceType, instance, Through),2))]
+frequ.instance.Through$AssistanceType1 <- factor(frequ.instance.Through$AssistanceType, levels=frequ.level)
+
+## let's subset values that are above 2%
+frequ.instance.Through1 <- frequ.instance.Through[frequ.instance.Through$N >= 0.01, ]
+frequ.instance.Through1$Through1 <- as.factor(as.character(frequ.instance.Through1$Through))
+
+plotfreq.instance.Through <- ggplot(frequ.instance.Through1, aes(x=AssistanceType1,y = N,  fill=Through)) +
+  geom_bar(stat="identity" ,colour="#2a87c8") +
+  facet_wrap(~ instance, ncol=3) +
+  ylab("Frequency") +
+  scale_fill_brewer(palette = "Paired") + 
+  xlab("") +
+  coord_flip() +
+  ggtitle("Assistance Type per instance for Intermediate Organisation", 
+          subtitle = "Only organisation that have assistance records accounting for more than 1% within countries are displayed" )+
+  theme(plot.title=element_text(face="bold", size=9),
+        plot.subtitle=element_text( size=8),
+        plot.background = element_rect(fill = "transparent",colour = NA))
+plotfreq.instance.Through
+ggsave(plotfreq.instance.Through, filename="out/assistancetype-instance-Through.png", width=20,  dpi=300)
 
 
 
-#### hsitogramme
-assistance.case2$ProvidedDate2 <- as.POSIXct(assistance.case2$ProvidedDate)
+###########################################################################################################
+## graph per instance & organisation Funded
 
-p <- ggplot(assistance.case2, aes(ProvidedDate2, ..count..)) + 
-  geom_histogram() +
-  theme_bw() + 
-  xlab(NULL) +
-  scale_x_datetime(breaks = date_breaks("3 months"),
-                   labels = date_format("%Y-%b"),
-                   limits = c(as.POSIXct("2014-03-01"), 
-                              as.POSIXct("2017-03-01")) )
+###########################################################################################################
 
-p
+#frequ.instance <- assistance.case[, .N ,by = .(AssistanceType, instance)]
 
+## Getting directly relative percentage per instance
+frequ.instance.Funded <-assistance.case[, as.data.table(prop.table(table(AssistanceType, instance, Funded),2))]
+frequ.instance.Funded$AssistanceType1 <- factor(frequ.instance.Funded$AssistanceType, levels=frequ.level)
 
-# convert the Date to its numeric equivalent
-# Note that Dates are stored as number of days internally,
-# hence it is easy to convert back and forth mentally
-assistance.case2$ProvidedDate.num <- as.numeric(assistance.case2$ProvidedDate1)
+## let's subset values that are above 1%
+frequ.instance.Funded1 <- frequ.instance.Funded[frequ.instance.Funded$N >= 0.01, ]
+frequ.instance.Funded1$Funded1 <- as.factor(as.character(frequ.instance.Funded1$Funded))
 
-bin <- 60 # used for aggregating the data and aligning the labels
-
-p <- ggplot(assistance.case2, aes(ProvidedDate.num, ..count..)) +
-     geom_histogram(binwidth = bin, colour="white") +
-
-    # The numeric data is treated as a date,
-    # breaks are set to an interval equal to the binwidth,
-    # and a set of labels is generated and adjusted in order to align with bars
-    #scale_x_date(     breaks = seq(min(assistance.case2$ProvidedDate.num)-20, # change -20 term to taste
-                                   max(assistance.case2$ProvidedDate.num), 
-                                   bin),
-                     # labels = date_format("%Y-%b"),
-                     # limits = c(as.Date("2014-03-01"), as.Date("2017-03-01"))
-                     # ) +
-                      theme_bw() #+ 
-                     # xlab(NULL)  
-p
+plotfreq.instance.Funded <- ggplot(frequ.instance.Funded1, aes(x=AssistanceType1,y = N,  fill=Funded)) +
+  geom_bar(stat="identity" ,colour="#2a87c8") +
+  facet_wrap(~ instance, ncol=3) +
+  ylab("Frequency") +
+  scale_fill_brewer(palette = "Paired") + 
+  xlab("") +
+  coord_flip() +
+  ggtitle("Assistance Type per instance for Funding Organisation", 
+          subtitle = "Only organisation that have assistance records accounting for more than 1% within countries are displayed" )+
+  theme(plot.title=element_text(face="bold", size=9),
+        plot.subtitle=element_text( size=8),
+        plot.background = element_rect(fill = "transparent",colour = NA))
+plotfreq.instance.Funded
+ggsave(plotfreq.instance.Funded, filename="out/assistancetype-instance-Funded.png",  width=20, dpi=300)
 
 
-### Histogram by date
+###########################################################################################################
+## graph per instance & date
 
-assistance.bydate <- as.data.frame(table(assistance.case2$ProvidedDate1, assistance.case2$AssistanceType))
-assistance.bydate$Var1 <- as.Date(as.character(assistance.bydate$Var1), "%Y-%m-%d")
+###########################################################################################################
 
-#,sum(AssistanceType))
 
-bydate <-  ggplot(assistance.bydate,
-                  aes(x=format(Var1,"%d-%b")), y = Freq) + 
-                    geom_bar(stat="identity") +
-                    labs(x="Date")
-bydate
+#frequ.instance.date <-assistance.case[, as.data.table(table(AssistanceType, instance, year(ProvidedDate)))]
+#frequ.instance.month <-assistance.case[, as.data.table(table(AssistanceType, instance, month(ProvidedDate)))]
+frequ.instance.monthyear <-assistance.case[, as.data.table(table(AssistanceType, instance, format(ProvidedDate, "%Y-%m")))]
+ 
+## Reorder factors
+frequ.instance.monthyear$AssistanceType1 <- factor(frequ.instance.monthyear$AssistanceType, levels=frequ.level)
 
-ggsave(bydate, "out/bydate.png", width=15, height=8,units="in", dpi=300)
+plotfreq.instance.monthyear <- ggplot(frequ.instance.monthyear, aes(x=V1, y = N,  fill=AssistanceType1)) +
+  geom_bar(stat="identity" ,colour="#2a87c8") +
+  facet_wrap(~ instance, nrow=3) +
+  ylab("# of records") +
+  scale_fill_brewer(palette = "Paired") + 
+  xlab("") +
+  
+  ## setting up a focus in 
+ # coord_flip() +
+  ggtitle("Assistance Type per instance and year", 
+          subtitle = " " )+
+  theme(plot.title=element_text(face="bold", size=9),
+        plot.subtitle=element_text( size=8),
+        plot.background = element_rect(fill = "transparent",colour = NA),
+        #legend.position="top",
+        legend.position="bottom",
+        legend.title=element_blank(),
+        axis.text.x = element_text(angle = 30, vjust = 0.5, hjust=1))
+plotfreq.instance.monthyear
+ggsave(plotfreq.instance.monthyear, filename="out/assistancetype-instance-monthyear.png",  width=20, dpi=300)
+
+
+
+
