@@ -1,19 +1,20 @@
 ---
-title: "Initial Exploration of Assistance tracking in RAIS - Iraq-Jordan-Lebanon"
-author: "Prepared by UNHCR DOiA, MENA Protection Services"
+title: "Assistance tracking in RAIS - Iraq-Jordan-Lebanon"
+author: "Initial Dataset Exploration"
 date: "Amman, `r Sys.Date()`"
 output: 
   word_document: 
     fig_caption: yes
     toc: yes
     toc_depth: 2
+    reference_docx: style.docx
 ---
 
 ```{r setup, include=FALSE, echo=FALSE, warning=FALSE, message=FALSE}
 
-source("D:/R-project/assistance-analysis/code/0-packages.R")
+source("C:/R-project/assistance-analysis/code/0-packages.R")
 
-assistance.case <- fread( file = "D:/R-project/assistance-analysis/data/assistancecase.csv",na="")
+assistance.case <- fread( file = "C:/R-project/assistance-analysis/data/assistancecase.csv",na="")
 ## Reparse correctly the date
 assistance.case$ProvidedDate <- as.Date(as.character(assistance.case$ProvidedDate), "%Y-%m-%d")
 ## need to remove records with wrong date..
@@ -24,20 +25,21 @@ assistance.case <- assistance.case[ ProvidedDate < as.Date(fast_strptime("2017-0
 
 
 
-
 # Introduction
 
-This reports presents the analysis of assistance recorded in the RAIS - (Refugee Assistance Information System) fro Jordan, Lebanon & Iraq.
+This reports presents the analysis of assistance recorded in the RAIS - (Refugee Assistance Information System) for Jordan, Lebanon & Iraq.
 
-Once cleaned from the records with erroneous date, tt represents a total of `r nrow(assistance.case)` :   `r nrow(assistance.case[ instance=="Iraq" ])`  for Iraq, `r nrow(assistance.case[ instance=="Lebanon" ])`  for Lebanon and  `r nrow(assistance.case [ instance == "Jordan" ])`  for Jordan.
+Once cleaned from the records with erroneous date, it represents a total of `r formatC(nrow(assistance.case), big.mark=",")` :   `r formatC(nrow(assistance.case[ instance=="Iraq" ]), big.mark=",")`  for Iraq, `r formatC(nrow(assistance.case[ instance=="Lebanon" ]), big.mark=",")`  for Lebanon and  `r formatC(nrow(assistance.case [ instance == "Jordan" ]), big.mark=",")`  for Jordan.
 
 
 
 Assistance Type were recategorised in order to come with meaningfull categories for analysis.
 
-# Assistance per type
+# Analysis of Assistance 
 
-```{r , echo=FALSE, warning=FALSE, fig.width=7, fig.height=6}
+## Assistance per type
+
+```{r assist-type , echo=FALSE, warning=FALSE, fig.width=7}
 
 ## Checking structure
 #str(assistance.case)
@@ -49,7 +51,7 @@ frequ <- assistance.case[, .N ,by = AssistanceType]
 frequ <- frequ[order(frequ$N),]
 frequ.level <- as.character(frequ$AssistanceType)
 frequ$AssistanceType1 <- factor(frequ$AssistanceType, levels=frequ.level)
-levels(frequ$AssistanceType1)
+#levels(frequ$AssistanceType1)
 frequ$Frequency <- frequ$N/sum(frequ$N)
 
 ## Old 
@@ -80,9 +82,9 @@ plotfreq
 
 ```
 
-# Assistance per type and country
+## Assistance per type and country
 
-```{r , echo=FALSE, warning=FALSE, fig.width=7, fig.height=6}
+```{r assist-instance , echo=FALSE, warning=FALSE, fig.width=7}
 
 
 ###########################################################################################################
@@ -96,7 +98,7 @@ plotfreq
 frequ.instance <-assistance.case[, as.data.table(prop.table(table(AssistanceType, instance),2))]
 
 frequ.instance$AssistanceType1 <- factor(frequ.instance$AssistanceType, levels=frequ.level)
-levels(frequ.instance$AssistanceType1)
+#levels(frequ.instance$AssistanceType1)
 
 
 plotfreq.instance <- ggplot(frequ.instance, aes(x=AssistanceType1,y = N)) +
@@ -115,9 +117,9 @@ plotfreq.instance
 
 ```
 
-# Assistance per type, instance & providing organisation
+## Assistance per type, instance & providing organisation
 
-```{r , echo=FALSE, warning=FALSE, fig.width=15}
+```{r assistprovide , echo=FALSE, warning=FALSE, fig.width=10}
 
 ###########################################################################################################
 ## graph per instance & organisation Provide
@@ -145,13 +147,14 @@ plotfreq.instance.provide <- ggplot(frequ.instance.provide1, aes(x=AssistanceTyp
           subtitle = "Only organisation that have assistance records accounting for more than 5% within countries are displayed" )+
   theme(plot.title=element_text(face="bold", size=9),
         plot.subtitle=element_text( size=8),
+        legend.position="bottom",
         plot.background = element_rect(fill = "transparent",colour = NA))
 plotfreq.instance.provide
 ```
 
-# Assistance per type, instance & intermediary organisation
+## Assistance per type, instance & intermediary organisation
 
-```{r , echo=FALSE, warning=FALSE, fig.width=15}
+```{r assist-through , echo=FALSE, warning=FALSE, fig.width=10}
 
 ###########################################################################################################
 ## graph per instance & organisation Through
@@ -179,13 +182,14 @@ plotfreq.instance.Through <- ggplot(frequ.instance.Through1, aes(x=AssistanceTyp
           subtitle = "Only organisation that have assistance records accounting for more than 1% within countries are displayed" )+
   theme(plot.title=element_text(face="bold", size=9),
         plot.subtitle=element_text( size=8),
+        legend.position="bottom",
         plot.background = element_rect(fill = "transparent",colour = NA))
 plotfreq.instance.Through
 ```
 
-# Assistance per type, instance & funding organisation
+## Assistance per type, instance & funding organisation
 
-```{r , echo=FALSE, warning=FALSE, fig.width=15}
+```{r assist-funding, echo=FALSE, warning=FALSE, fig.width=10}
 
 
 ###########################################################################################################
@@ -214,13 +218,16 @@ plotfreq.instance.Funded <- ggplot(frequ.instance.Funded1, aes(x=AssistanceType1
           subtitle = "Only organisation that have assistance records accounting for more than 1% within countries are displayed" )+
   theme(plot.title=element_text(face="bold", size=9),
         plot.subtitle=element_text( size=8),
+        legend.position="bottom",
         plot.background = element_rect(fill = "transparent",colour = NA))
 plotfreq.instance.Funded
 ```
 
-# Assistance per type, instance & date
+# Analysis per time
 
-```{r , echo=FALSE, warning=FALSE, fig.width=15}
+## Assistance per type, instance & date
+
+```{r assist-time , echo=FALSE, warning=FALSE, fig.width=15, fig.height=8}
 
 ###########################################################################################################
 ## graph per instance & date
@@ -254,32 +261,24 @@ plotfreq.instance.monthyear <- ggplot(frequ.instance.monthyear, aes(x=V1, y = N,
         legend.title=element_blank(),
         axis.text.x = element_text(angle = 30, vjust = 0.5, hjust=1))
 plotfreq.instance.monthyear
-ggsave(plotfreq.instance.monthyear, filename="out/assistancetype-instance-monthyear.png",  width=20, dpi=300)
-
-
-
-
 
 ```
 
 
+# Analysis per subtype
 
-# Assistance record per country over years
+## Details of cash assistance
 
+## Details of NFI assistance
 
-# Assistancetype, country and months
+# Analysis of assistance flows
 
-# Details of cash assistance
-
-# Details of NFI assistance
-
-# 
-
-# Assistance Type from & through - by year & country
+## Assistance Type from & through - by year & country
 The following sankey diagram provided an overview of the origin and delivery stream of 
 
 
 # Assistance occurence by case
+
 The following visualisation provides an overview of the most associated assistance type
 
 
