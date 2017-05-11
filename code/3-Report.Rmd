@@ -19,6 +19,7 @@ assistance.case$ProvidedDate <- as.Date(as.character(assistance.case$ProvidedDat
 ## need to remove records with wrong date..
 assistance.case <- assistance.case[ ProvidedDate > as.Date(fast_strptime("2012-06-01", "%Y-%m-%d"))]
 assistance.case <- assistance.case[ ProvidedDate < as.Date(fast_strptime("2017-04-01", "%Y-%m-%d"))]
+
 ```
 
 
